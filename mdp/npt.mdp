@@ -1,0 +1,55 @@
+; NPT equilibration -- same idea as NVT (settle the system at the right
+; temperature) but now also let the box VOLUME relax so the system reaches
+; the physically correct density/pressure (1 atm) at 300 K, rather than
+; being stuck at whatever slightly-too-large box we built by hand with the
+; 1.2 nm padding. Solute position restraints stay on (same as NVT) so the
+; complex itself doesn't drift while only the water shell relaxes around it.
+define      = -DPOSRES
+integrator  = md
+nsteps      = 25000        ; 25000 * 2 fs = 50 ps
+dt          = 0.002
+
+nstxout     = 0
+nstvout     = 0
+nstenergy   = 100
+nstlog      = 500
+nstxout-compressed = 500
+
+continuation            = yes   ; continuing from NVT -- bond lengths already constrained, don't reset
+constraint_algorithm    = lincs
+constraints             = h-bonds
+lincs_iter              = 1
+lincs_order             = 4
+
+cutoff-scheme   = Verlet
+ns_type         = grid
+nstlist         = 20
+rcoulomb        = 1.2
+rvdw            = 1.2
+
+coulombtype     = PME
+pme_order       = 4
+fourierspacing  = 0.16
+
+tcoupl      = V-rescale
+tc-grps     = non-Water Water
+tau_t       = 0.1 0.1
+ref_t       = 300 300
+
+; the new piece versus NVT: a barostat, coupling the box size to a target
+; pressure (Parrinello-Rahman is the more rigorous choice for production,
+; but Berendsen is the standard, more numerically forgiving choice for
+; *equilibration* specifically -- it relaxes the box smoothly without the
+; oscillatory overshoot Parrinello-Rahman can show when starting far from
+; the target density, which is exactly our situation coming out of a
+; hand-built box)
+pcoupl          = Berendsen
+pcoupltype      = isotropic
+tau_p           = 2.0
+ref_p           = 1.0
+compressibility = 4.5e-5
+
+pbc         = xyz
+DispCorr    = EnerPres
+
+gen_vel     = no    ; continuing from NVT -- keep the velocities we already equilibrated, don't regenerate

@@ -1,0 +1,61 @@
+; Production MD -- NO position restraints this time (that's the key
+; difference from NVT/NPT). Up to now the curcumin molecule and the GO
+; flake were both held almost rigidly in place with a stiff spring
+; (posres, 1000 kJ/mol/nm^2) while the WATER equilibrated around them --
+; that's what NVT/NPT are for. Now that the water shell and box density
+; are settled, we remove the define=-DPOSRES line entirely, so curcumin
+; and the flake are finally free to move under real physical forces. This
+; is the actual experiment: does curcumin stay adsorbed on the GO surface,
+; or does it drift away into the water? Everything else (thermostat,
+; barostat, timestep, constraints) stays the same as NPT, since we want to
+; keep sampling at the same physically-equilibrated 300 K / 1 atm state --
+; only the restraint changes.
+integrator  = md
+nsteps      = 250000       ; 250000 * 2 fs = 500 ps (0.5 ns) -- honestly
+                            ; scoped against sandbox compute/time budget,
+                            ; not the literature's 50 ns (see project plan
+                            ; doc's scope caveats) -- can be extended later
+dt          = 0.002
+
+nstxout     = 0
+nstvout     = 0
+nstenergy   = 500
+nstlog      = 2500
+nstxout-compressed = 1000  ; save a compressed-trajectory frame every 2 ps for analysis
+
+continuation            = yes
+constraint_algorithm    = lincs
+constraints             = h-bonds
+lincs_iter              = 1
+lincs_order             = 4
+
+cutoff-scheme   = Verlet
+ns_type         = grid
+nstlist         = 20
+rcoulomb        = 1.2
+rvdw            = 1.2
+
+coulombtype     = PME
+pme_order       = 4
+fourierspacing  = 0.16
+
+tcoupl      = V-rescale
+tc-grps     = non-Water Water
+tau_t       = 0.1 0.1
+ref_t       = 300 300
+
+pcoupl          = Parrinello-Rahman  ; more rigorous barostat for production
+                                      ; (Berendsen was fine/preferred for the
+                                      ; equilibration phase; P-R is the
+                                      ; correct choice once we're sampling a
+                                      ; properly-equilibrated state, since
+                                      ; it reproduces the true NPT ensemble)
+pcoupltype      = isotropic
+tau_p           = 2.0
+ref_p           = 1.0
+compressibility = 4.5e-5
+
+pbc         = xyz
+DispCorr    = EnerPres
+
+gen_vel     = no    ; continuing from NPT -- keep its velocities

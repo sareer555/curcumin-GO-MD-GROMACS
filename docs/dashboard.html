@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Curcumin on Graphene Oxide — MD Stability Dashboard</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --border: #e2e6ea;
+    --text: #1a202c;
+    --text-muted: #5a6472;
+    --accent: #2b6cb0;
+    --accent-2: #c05621;
+    --good: #2f855a;
+    --warn-bg: #fffaf0;
+    --warn-border: #ecc94b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 40px 20px 80px; }
+  header { margin-bottom: 32px; }
+  header h1 { font-size: 1.7rem; margin: 0 0 8px; }
+  header p.sub { color: var(--text-muted); font-size: 1.02rem; margin: 0; }
+  .badge-row { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge {
+    display: inline-block; padding: 4px 10px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-size: 0.78rem; color: var(--text-muted);
+  }
+  .badge.link { color: var(--accent); text-decoration: none; border-color: #cfe0f0; }
+
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 28px 0; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px;
+  }
+  .tile .label { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px; }
+  .tile .value { font-size: 1.35rem; font-weight: 600; }
+  .tile .value.good { color: var(--good); }
+  .tile .note { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+
+  section { margin: 36px 0; }
+  h2 { font-size: 1.15rem; margin: 0 0 12px; }
+  p { margin: 0 0 12px; }
+
+  .figure {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px; text-align: center;
+  }
+  .figure img { max-width: 100%; border-radius: 6px; }
+  .figure figcaption { font-size: 0.82rem; color: var(--text-muted); margin-top: 8px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  th { background: #fafbfc; font-weight: 600; font-size: 0.82rem; color: var(--text-muted); }
+  tr:last-child td { border-bottom: none; }
+
+  .callout {
+    background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 10px;
+    padding: 16px 18px; font-size: 0.92rem;
+  }
+  .callout strong { display: block; margin-bottom: 4px; }
+
+  .pipeline { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pipeline .step {
+    flex: 1 1 120px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; font-size: 0.82rem; text-align: center;
+  }
+  .pipeline .step .n { color: var(--accent); font-weight: 700; font-size: 0.75rem; }
+  .pipeline .arrow { align-self: center; color: var(--text-muted); }
+
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted); }
+  footer a { color: var(--accent); }
+
+  @media (max-width: 720px) {
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Curcumin on Graphene Oxide — MD Stability Study</h1>
+    <p class="sub">Does a favorable DFT binding energy actually survive real thermal motion in water? A 500 ps unrestrained molecular dynamics run says: yes, so far.</p>
+    <div class="badge-row">
+      <span class="badge">GROMACS 2023.3</span>
+      <span class="badge">TIP3P water, explicit solvent</span>
+      <span class="badge">13,949 atoms</span>
+      <span class="badge">300 K / 1 atm</span>
+      <a class="badge link" href="https://github.com/sareer555/curcumin-GO-MD-GROMACS">GitHub repo →</a>
+      <a class="badge link" href="https://sareer555.github.io/curcumin-doxorubicin-GO-DFT/">Project 1 (DFT) →</a>
+    </div>
+  </header>
+
+  <section>
+    <h2>Headline numbers — production MD (500 ps, restraints off)</h2>
+    <div class="tiles">
+      <div class="tile">
+        <div class="label">Closest contact, start → end</div>
+        <div class="value good">0.35 → 0.23 nm</div>
+        <div class="note">Tightened, not loosened</div>
+      </div>
+      <div class="tile">
+        <div class="label">COM distance, start → end</div>
+        <div class="value good">0.79 → 0.62 nm</div>
+        <div class="note">Curcumin moved toward the surface</div>
+      </div>
+      <div class="tile">
+        <div class="label">Curcumin heavy-atom RMSD</div>
+        <div class="value">0.22 nm (mean)</div>
+        <div class="note">Flexes but doesn't unfold</div>
+      </div>
+      <div class="tile">
+        <div class="label">Radius of gyration</div>
+        <div class="value">0.57 → 0.61 nm</div>
+        <div class="note">±0.016 nm — stable shape</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Trajectory analysis</h2>
+    <figure class="figure">
+      <img src="../figures/production_analysis.png" alt="Four-panel plot: curcumin-GO contact distance, COM distance, RMSD, and radius of gyration over the 500 ps production run">
+      <figcaption>Closest-contact distance (top left) and center-of-mass distance (top right) both trend downward over the run — curcumin settles closer to the GO surface, not further away. Curcumin's own RMSD and radius of gyration (bottom row) stay flat, meaning it stays intact rather than unfolding or fragmenting.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Pipeline</h2>
+    <div class="pipeline">
+      <div class="step"><div class="n">1</div>GO flake<br>build (ASE)</div>
+      <div class="step"><div class="n">2</div>Curcumin + GO<br>topologies</div>
+      <div class="step"><div class="n">3</div>Complex assembly<br>(DFT-derived pose)</div>
+      <div class="step"><div class="n">4</div>Solvate +<br>neutralize</div>
+      <div class="step"><div class="n">5</div>Energy<br>minimization</div>
+      <div class="step"><div class="n">6</div>NVT<br>equilibration</div>
+      <div class="step"><div class="n">7</div>NPT<br>equilibration</div>
+      <div class="step"><div class="n">8</div>Production MD<br>(500 ps, unrestrained)</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Thermodynamic stability across every stage</h2>
+    <table>
+      <thead><tr><th>Stage</th><th>Length</th><th>Temperature</th><th>Density / pressure</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Energy minimization</td><td>—</td><td>—</td><td>—</td><td>Converged in 72 steps</td></tr>
+        <tr><td>NVT equilibration</td><td>50 ps</td><td>299.7 ± 2.8 K</td><td>—</td><td>Zero LINCS failures</td></tr>
+        <tr><td>NPT equilibration</td><td>50 ps</td><td>299.5 K</td><td>~1018 kg/m³, flat</td><td>No drift</td></tr>
+        <tr><td>Production MD</td><td>500 ps</td><td>300.1 K</td><td>~1019 kg/m³, ~4 bar</td><td>Stable throughout</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="callout">
+      <strong>Honest scope caveat</strong>
+      500 ps is short relative to real desorption/diffusion timescales. This result supports "curcumin does not spontaneously desorb on a sub-nanosecond timescale under these conditions" — it is not proof of long-term (µs–ms, biologically relevant) stability, which would need a literature-scale 50+ ns run beyond this project's compute budget. It also builds on an explicitly-documented "parameterize by chemical analogy" force field (no AmberTools/acpype access in this environment) — see the GitHub repo's README for the full methodology and the two real geometry bugs found and fixed along the way.
+    </div>
+  </section>
+
+  <footer>
+    Project 2 of a two-part computational nanomedicine study. Full methodology, scripts, topology files, and raw analysis data: <a href="https://github.com/sareer555/curcumin-GO-MD-GROMACS">github.com/sareer555/curcumin-GO-MD-GROMACS</a>. Project 1 (DFT binding energies): <a href="https://github.com/sareer555/curcumin-doxorubicin-GO-DFT">github.com/sareer555/curcumin-doxorubicin-GO-DFT</a>.
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+[ atomtypes ]
+; name    mass    charge  ptype   sigma(nm)   epsilon(kJ/mol)
+     C_basal    12.011  0.0000  A     0.35349     0.25919
+   C_epoxide    12.011  0.0000  A     0.34415     0.25919
+  C_hydroxyl    12.011  0.0000  A     0.34398     0.25919
+   O_epoxide    15.999  0.0000  A     0.29066     0.41881
+  O_hydroxyl    15.999  0.0000  A     0.30002     0.41881
+  H_hydroxyl     1.008  0.0000  A     0.20743     0.15047
+      C_edge    12.011  0.0000  A     0.35500     0.29288
+      H_edge     1.008  0.0000  A     0.24200     0.12552
